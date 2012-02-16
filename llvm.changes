@@ -1,0 +1,12 @@
+* Thu Feb 16 2012 Carsten Munk <carsten@merproject.org> - 3.0
+- Upgrade to LLVM 3.0, port to Mer
+
+* Fri Aug 04 2006 Reid Spencer
+- Updates for release 1.8
+* Fri Apr 07 2006 Reid Spencer
+- Make the build be optimized+assertions
+* Fri May 13 2005 Reid Spencer
+- Minor adjustments for the 1.5 release
+* Mon Feb 09 2003 Brian R. Gaeke
+- Initial working version of RPM spec file.
+
