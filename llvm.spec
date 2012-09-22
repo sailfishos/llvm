@@ -1,11 +1,11 @@
 Name: llvm
-Version: 3.0
+Version: 3.1
 Release: 0
 Summary: The Low Level Virtual Machine (An Optimizing Compiler Infrastructure)
 License: University of Illinois/NCSA Open Source License
 Group: Development/Tools
 URL: http://llvm.org/
-Source: http://llvm.org/releases/%{version}/%{name}-%{version}.tar.gz
+Source: http://llvm.org/releases/%{version}/%{name}-%{version}.src.tar.gz
 Requires(post): /sbin/ldconfig
 Requires(postun): /sbin/ldconfig
 BuildRequires: gcc >= 3.4, python
@@ -29,7 +29,7 @@ Requires:       %{name} = %{version}
 LLVM Header files
 
 %prep
-%setup -q -n llvm-3.0.src
+%setup -q -n llvm-3.1.src
 
 %build
 ./configure \
@@ -39,9 +39,6 @@ LLVM Header files
 --includedir=%{_includedir} \
 --libdir=%{_libdir} \
 --enable-optimized \
-%ifarch %{arm}
---disable-jit \
-%endif
 --enable-assertions \
 --disable-docs
 make tools-only

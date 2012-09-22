@@ -1,3 +1,6 @@
+* Sat Sep 22 2012 Carsten Munk <carsten.munk@jollamobile.com> - 3.1
+- Upgrade to LLVM 3.1
+
 * Thu Feb 16 2012 Carsten Munk <carsten@merproject.org> - 3.0
 - Upgrade to LLVM 3.0, port to Mer
 
