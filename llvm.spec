@@ -6,6 +6,7 @@ License: University of Illinois/NCSA Open Source License
 Group: Development/Tools
 URL: http://llvm.org/
 Source: http://llvm.org/releases/%{version}/%{name}-%{version}.src.tar.gz
+Patch0: llvm-3.1-sb2-build-workaround.patch
 Requires(post): /sbin/ldconfig
 Requires(postun): /sbin/ldconfig
 BuildRequires: gcc >= 3.4, python
@@ -30,6 +31,7 @@ LLVM Header files
 
 %prep
 %setup -q -n llvm-3.1.src
+%patch0 -p1
 
 %build
 ./configure \
