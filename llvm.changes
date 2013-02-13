@@ -1,3 +1,7 @@
+* Wed Feb 13 2013 Carsten Munk <carsten.munk@jollamobile.com> - 3.1
+- Add patch to disable AVX/SSE4.1 currently. There's a bug in VirtualBox that causes improper CPUID to leak
+  through. AVX isn't supported by VirtualBox so this causes SIGILL.
+
 * Tue Jan 22 2013 Oleg Girko <ol+mer@infoserver.ru> - 3.1
 - Add workaround to fix building llvm with scratchbox2.
 
