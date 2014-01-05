@@ -1,0 +1,11 @@
+--- a/lib/Support/Unix/Path.inc
++++ b/lib/Support/Unix/Path.inc
+@@ -335,7 +335,7 @@
+ 
+   if (getprogpath(exe_path, argv0) != NULL)
+     return Path(exe_path);
+-#elif defined(__linux__) || defined(__CYGWIN__)
++#elif 0 // defined(__linux__) || defined(__CYGWIN__)
+   char exe_path[MAXPATHLEN];
+   ssize_t len = readlink("/proc/self/exe", exe_path, sizeof(exe_path));
+   if (len >= 0)
