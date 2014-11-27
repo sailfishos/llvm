@@ -48,7 +48,7 @@ cp %{_sourcedir}/LLVMBuild.txt projects/
 --enable-optimized \
 --enable-assertions \
 --disable-docs
-make tools-only
+make %{?_smp_mflags} tools-only
 
 %install
 rm -rf %{buildroot}
