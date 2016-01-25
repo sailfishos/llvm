@@ -40,6 +40,8 @@ cp %{_sourcedir}/LLVMBuild.txt projects/
 
 %build
 ./configure \
+--build=%{_target_platform} \
+--host=%{_target_platform} \
 --prefix=%{_prefix} \
 --bindir=%{_bindir} \
 --datadir=%{_datadir} \
