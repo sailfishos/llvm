@@ -1,5 +1,5 @@
 Name: llvm
-Version: 3.3
+Version: 7.0.1
 Release: 0
 Summary: The Low Level Virtual Machine (An Optimizing Compiler Infrastructure)
 License: University of Illinois/NCSA Open Source License
@@ -7,12 +7,11 @@ Group: Development/Tools
 URL: http://llvm.org/
 Source: %{version}/%{name}-%{version}.tar.gz
 Source1: LLVMBuild.txt
-Source100: llvm-3.0-rpmlintrc
-Patch0: llvm-3.1-sb2-build-workaround.patch
 Patch1: nosse4-avx.patch
 Requires(post): /sbin/ldconfig
 Requires(postun): /sbin/ldconfig
-BuildRequires: gcc >= 3.4, python
+BuildRequires: cmake
+BuildRequires: gcc, python
 
 %description
 LLVM is a compiler infrastructure designed for compile-time, link-time, runtime,
@@ -33,28 +32,36 @@ Requires:       %{name} = %{version}
 LLVM Header files
 
 %prep
-%setup -q -n %{name}-%{version}/%{name}
-%patch0 -p1
-#%patch1 -p1
+%setup -q -n %{name}-%{version}/%{name}/llvm
 cp %{_sourcedir}/LLVMBuild.txt projects/
 
 %build
-./configure \
---build=%{_target_platform} \
---host=%{_target_platform} \
---prefix=%{_prefix} \
---bindir=%{_bindir} \
---datadir=%{_datadir} \
---includedir=%{_includedir} \
---libdir=%{_libdir} \
---enable-optimized \
---enable-assertions \
---disable-docs
-make %{?_smp_mflags} tools-only
+
+mkdir -p build
+pushd build
+
+%cmake .. -G "Unix Makefiles" \
+-DBUILD_SHARED_LIBS:BOOL=OFF \
+-DCMAKE_BUILD_TYPE=Release \
+-DLLVM_BUILD_DOCS:BOOL=OFF \
+-DLLVM_BUILD_LLVM_DYLIB:BOOL=OFF \
+-DLLVM_BUILD_RUNTIME:BOOL=OFF \
+-DLLVM_ENABLE_ASSERTIONS:BOOL=OFF \
+-DLLVM_INCLUDE_BENCHMARKS:BOOL=OFF \
+-DLLVM_INCLUDE_DIRS:PATH=%{_includedir} \
+-DLLVM_INCLUDE_EXAMPLES:BOOL=OFF \
+-DLLVM_INCLUDE_TEST:BOOL=OFF \
+-DLLVM_LINK_LLVM_DYLIB:BOOL=OFF \
+-DLLVM_TARGETS_TO_BUILD=Native \
+-DLLVM_TOOLS_BINARY_DIR:PATH=%{_bindir}
+
+# Jobs limited to 4 to prevent OBS from running out of memory
+make -j4
+popd build
 
 %install
 rm -rf %{buildroot}
-make install DESTDIR=%{buildroot}
+make -C build install/strip DESTDIR=%{buildroot}
 
 %post -p /sbin/ldconfig
 
@@ -62,13 +69,14 @@ make install DESTDIR=%{buildroot}
 
 %files
 %defattr(-, root, root)
-%doc CREDITS.TXT LICENSE.TXT README.txt
 %{_bindir}/*
-%attr(744,-,-) %{_libdir}/*.so
+%{_libdir}/*.so.*
+%{_datadir}/opt-viewer
 
 %files devel
 %defattr(-, root, root)
-%attr(744,-,-) %{_libdir}/*.a
+%{_libdir}/*.a
+%{_libdir}/*.so
 %{_includedir}/llvm
 %{_includedir}/llvm-c
-
+%{_libdir}/cmake
