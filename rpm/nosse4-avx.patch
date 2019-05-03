@@ -1,6 +1,6 @@
-diff -ru llvm-3.1.src/lib/Target/X86/X86Subtarget.cpp llvm-3.1.src-noavxsse4/lib/Target/X86/X86Subtarget.cpp
---- llvm-3.1.src/lib/Target/X86/X86Subtarget.cpp	2012-06-12 14:35:17.000000000 +0200
-+++ llvm-3.1.src-noavxsse4/lib/Target/X86/X86Subtarget.cpp	2013-02-13 14:01:46.918216857 +0100
+diff -ru llvm-3.1.src/llvm/lib/Target/X86/X86Subtarget.cpp llvm-3.1.src-noavxsse4/llvm/lib/Target/X86/X86Subtarget.cpp
+--- llvm-3.1.src/llvm/lib/Target/X86/X86Subtarget.cpp	2012-06-12 14:35:17.000000000 +0200
++++ llvm-3.1.src-noavxsse4/llvm/lib/Target/X86/X86Subtarget.cpp	2013-02-13 14:01:46.918216857 +0100
 @@ -194,10 +194,11 @@
    if ((EDX >> 26) & 1) { X86SSELevel = SSE2;  ToggleFeature(X86::FeatureSSE2); }
    if (ECX & 0x1)       { X86SSELevel = SSE3;  ToggleFeature(X86::FeatureSSE3); }
