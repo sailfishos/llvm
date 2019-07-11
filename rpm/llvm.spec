@@ -1,3 +1,15 @@
+%ifarch %ix86 x86_64
+# ARM/AARCH64 enabled due to rhbz#1627500
+#global llvm_targets X86;AMDGPU;NVPTX;BPF;ARM;AArch64
+%global llvm_targets X86;AMDGPU;NVPTX;BPF
+%endif
+%ifarch aarch64
+%global llvm_targets AArch64;AMDGPU;BPF
+%endif
+%ifarch %{arm}
+%global llvm_targets ARM;AMDGPU;BPF
+%endif
+
 Name: llvm
 Version: 7.0.1
 Release: 0
@@ -6,7 +18,6 @@ License: University of Illinois/NCSA Open Source License
 Group: Development/Tools
 URL: http://llvm.org/
 Source: %{version}/%{name}-%{version}.tar.gz
-Source1: LLVMBuild.txt
 Patch1: nosse4-avx.patch
 Requires(post): /sbin/ldconfig
 Requires(postun): /sbin/ldconfig
@@ -33,7 +44,6 @@ LLVM Header files
 
 %prep
 %setup -q -n %{name}-%{version}/%{name}/llvm
-cp %{_sourcedir}/LLVMBuild.txt projects/
 
 %build
 
@@ -52,7 +62,7 @@ pushd build
 -DLLVM_INCLUDE_EXAMPLES:BOOL=OFF \
 -DLLVM_INCLUDE_TEST:BOOL=OFF \
 -DLLVM_LINK_LLVM_DYLIB:BOOL=OFF \
--DLLVM_TARGETS_TO_BUILD=Native \
+-DLLVM_TARGETS_TO_BUILD="%{llvm_targets}" \
 -DLLVM_TOOLS_BINARY_DIR:PATH=%{_bindir}
 
 # Jobs limited to 4 to prevent OBS from running out of memory
