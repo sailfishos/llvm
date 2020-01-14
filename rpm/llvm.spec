@@ -11,18 +11,17 @@
 %endif
 
 Name: llvm
-Version: 7.0.1
+Version: 9.0.1
 Release: 0
 Summary: The Low Level Virtual Machine (An Optimizing Compiler Infrastructure)
 License: University of Illinois/NCSA Open Source License
 Group: Development/Tools
 URL: http://llvm.org/
 Source: %{version}/%{name}-%{version}.tar.gz
-Patch1: nosse4-avx.patch
 Requires(post): /sbin/ldconfig
 Requires(postun): /sbin/ldconfig
-BuildRequires: cmake
-BuildRequires: gcc, python
+BuildRequires: cmake, ninja
+BuildRequires: gcc, python3-base
 
 %description
 LLVM is a compiler infrastructure designed for compile-time, link-time, runtime,
@@ -50,28 +49,34 @@ LLVM Header files
 mkdir -p build
 pushd build
 
-%cmake .. -G "Unix Makefiles" \
+# Decrease debuginfo verbosity to reduce memory consumption during final library linking
+%global optflags %(echo %{optflags} | sed 's/-g /-g0 /')
+
+%cmake .. -G Ninja \
 -DBUILD_SHARED_LIBS:BOOL=OFF \
 -DCMAKE_BUILD_TYPE=Release \
+-DCMAKE_INSTALL_RPATH=";" \
+-DCMAKE_C_FLAGS="%{optflags} -DNDEBUG" \
+-DCMAKE_CXX_FLAGS="%{optflags} -DNDEBUG" \
 -DLLVM_BUILD_DOCS:BOOL=OFF \
--DLLVM_BUILD_LLVM_DYLIB:BOOL=OFF \
+-DLLVM_BUILD_LLVM_DYLIB:BOOL=ON \
 -DLLVM_BUILD_RUNTIME:BOOL=OFF \
 -DLLVM_ENABLE_ASSERTIONS:BOOL=OFF \
 -DLLVM_INCLUDE_BENCHMARKS:BOOL=OFF \
 -DLLVM_INCLUDE_DIRS:PATH=%{_includedir} \
 -DLLVM_INCLUDE_EXAMPLES:BOOL=OFF \
 -DLLVM_INCLUDE_TEST:BOOL=OFF \
--DLLVM_LINK_LLVM_DYLIB:BOOL=OFF \
+-DLLVM_LINK_LLVM_DYLIB:BOOL=ON \
+-DLLVM_PARALLEL_LINK_JOBS=1 \
 -DLLVM_TARGETS_TO_BUILD="%{llvm_targets}" \
 -DLLVM_TOOLS_BINARY_DIR:PATH=%{_bindir}
 
-# Jobs limited to 4 to prevent OBS from running out of memory
-make -j4
+%ninja_build
 popd build
 
 %install
 rm -rf %{buildroot}
-make -C build install/strip DESTDIR=%{buildroot}
+%ninja_install -C build
 
 %post -p /sbin/ldconfig
 
@@ -81,12 +86,14 @@ make -C build install/strip DESTDIR=%{buildroot}
 %defattr(-, root, root)
 %{_bindir}/*
 %{_libdir}/*.so.*
+%{_libdir}/libLLVM-*.so
 %{_datadir}/opt-viewer
 
 %files devel
 %defattr(-, root, root)
 %{_libdir}/*.a
 %{_libdir}/*.so
+%exclude %{_libdir}/libLLVM-*.so
 %{_includedir}/llvm
 %{_includedir}/llvm-c
 %{_libdir}/cmake
