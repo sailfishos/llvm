@@ -1,13 +1,12 @@
 %ifarch %ix86 x86_64
 # ARM/AARCH64 enabled due to rhbz#1627500
-#global llvm_targets X86;AMDGPU;NVPTX;BPF;ARM;AArch64
-%global llvm_targets X86;AMDGPU;NVPTX;BPF
+%global llvm_targets X86;AMDGPU;NVPTX;BPF;ARM;AArch64;WebAssembly
 %endif
 %ifarch aarch64
-%global llvm_targets AArch64;AMDGPU;BPF
+%global llvm_targets AArch64;AMDGPU;BPF;WebAssembly
 %endif
 %ifarch %{arm}
-%global llvm_targets ARM;AMDGPU;BPF
+%global llvm_targets ARM;AMDGPU;BPF;WebAssembly
 %endif
 
 Name: llvm
