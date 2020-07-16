@@ -16,7 +16,12 @@ Summary: The Low Level Virtual Machine (An Optimizing Compiler Infrastructure)
 License: University of Illinois/NCSA Open Source License
 URL: http://llvm.org/
 Source: %{version}/%{name}-%{version}.tar.gz
+# LLVM patch
 Patch0:	llvm-sailfishos-toolchain.patch
+# clang patches
+Patch1:	0001-ToolChain-Add-lgcc_s-to-the-linker-flags-when-using-.patch
+Patch2:	0001-Make-funwind-tables-the-default-for-all-archs.patch
+Patch3:	clang-sailfishos-toolchain.patch
 Requires(post): /sbin/ldconfig
 Requires(postun): /sbin/ldconfig
 BuildRequires: cmake, ninja
