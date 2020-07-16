@@ -14,7 +14,6 @@ Version: 9.0.1
 Release: 0
 Summary: The Low Level Virtual Machine (An Optimizing Compiler Infrastructure)
 License: University of Illinois/NCSA Open Source License
-Group: Development/Tools
 URL: http://llvm.org/
 Source: %{version}/%{name}-%{version}.tar.gz
 Requires(post): /sbin/ldconfig
@@ -41,9 +40,10 @@ Requires:       %{name} = %{version}
 LLVM Header files
 
 %prep
-%setup -q -n %{name}-%{version}/%{name}/llvm
+%setup -q -n %{name}-%{version}/%{name}
 
 %build
+pushd llvm
 
 mkdir -p build
 pushd build
@@ -80,9 +80,15 @@ pushd build
 %ninja_build
 popd build
 
+popd llvm
+
 %install
+pushd llvm
+
 rm -rf %{buildroot}
 %ninja_install -C build
+
+popd llvm
 
 %post -p /sbin/ldconfig
 
@@ -90,6 +96,7 @@ rm -rf %{buildroot}
 
 %files
 %defattr(-, root, root)
+%license llvm/LICENSE.TXT
 %{_bindir}/*
 %{_libdir}/*.so.*
 %{_libdir}/libLLVM-*.so
