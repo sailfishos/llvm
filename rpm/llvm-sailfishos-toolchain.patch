@@ -1,0 +1,82 @@
+diff --git a/llvm/include/llvm/ADT/Triple.h b/llvm/include/llvm/ADT/Triple.h
+index edeb31efab8..fd9e38db0ac 100644
+--- a/llvm/include/llvm/ADT/Triple.h
++++ b/llvm/include/llvm/ADT/Triple.h
+@@ -149,7 +149,8 @@ public:
+     Mesa,
+     SUSE,
+     OpenEmbedded,
+-    LastVendorType = OpenEmbedded
++    MeeGo,
++    LastVendorType = MeeGo
+   };
+   enum OSType {
+     UnknownOS,
+diff --git a/llvm/lib/Support/Triple.cpp b/llvm/lib/Support/Triple.cpp
+index d419463e6a5..916ebc28856 100644
+--- a/llvm/lib/Support/Triple.cpp
++++ b/llvm/lib/Support/Triple.cpp
+@@ -166,6 +166,7 @@ StringRef Triple::getVendorTypeName(VendorType Kind) {
+   case AMD: return "amd";
+   case Mesa: return "mesa";
+   case SUSE: return "suse";
++  case MeeGo: return "meego";
+   case OpenEmbedded: return "oe";
+   }
+ 
+@@ -476,6 +477,7 @@ static Triple::VendorType parseVendor(StringRef VendorName) {
+     .Case("mesa", Triple::Mesa)
+     .Case("suse", Triple::SUSE)
+     .Case("oe", Triple::OpenEmbedded)
++    .Case("meego", Triple::MeeGo)
+     .Default(Triple::UnknownVendor);
+ }
+ 
+@@ -738,6 +740,9 @@ Triple::Triple(const Twine &Str)
+         OS = parseOS(Components[2]);
+         if (Components.size() > 3) {
+           Environment = parseEnvironment(Components[3]);
++          // MeeGo uses "gnueabi" to mean "gnueabihf"
++          if (Vendor == Triple::MeeGo && Environment == Triple::GNUEABI)
++            Environment = Triple::GNUEABIHF;
+           ObjectFormat = parseFormat(Components[3]);
+         }
+       }
+@@ -789,6 +794,10 @@ Triple::Triple(const Twine &ArchStr, const Twine &VendorStr, const Twine &OSStr,
+       ObjectFormat(parseFormat(EnvironmentStr.str())) {
+   if (ObjectFormat == Triple::UnknownObjectFormat)
+     ObjectFormat = getDefaultFormat(*this);
++
++  // MeeGo uses "gnueabi" to mean "gnueabihf"
++  if (Vendor == Triple::MeeGo && Environment == Triple::GNUEABI)
++    Environment = Triple::GNUEABIHF;
+ }
+ 
+ std::string Triple::normalize(StringRef Str) {
+@@ -1051,6 +1065,9 @@ void Triple::getEnvironmentVersion(unsigned &Major, unsigned &Minor,
+                                    unsigned &Micro) const {
+   StringRef EnvironmentName = getEnvironmentName();
+   StringRef EnvironmentTypeName = getEnvironmentTypeName(getEnvironment());
++  // MeeGo uses "gnueabi" to mean "gnueabihf"
++  if (Vendor == Triple::MeeGo && getEnvironment() == Triple::GNUEABIHF)
++    EnvironmentTypeName = "gnueabi";
+   if (EnvironmentName.startswith(EnvironmentTypeName))
+     EnvironmentName = EnvironmentName.substr(EnvironmentTypeName.size());
+ 
+diff --git a/llvm/unittests/ADT/TripleTest.cpp b/llvm/unittests/ADT/TripleTest.cpp
+index 37ebe5dbcb2..2a69a2af8f5 100644
+--- a/llvm/unittests/ADT/TripleTest.cpp
++++ b/llvm/unittests/ADT/TripleTest.cpp
+@@ -336,6 +336,12 @@ TEST(TripleTest, ParsedIDs) {
+   EXPECT_EQ(Triple::Linux, T.getOS());
+   EXPECT_EQ(Triple::GNUEABI, T.getEnvironment());
+ 
++  T = Triple("armv7hl-meego-linux-gnueabi");
++  EXPECT_EQ(Triple::arm, T.getArch());
++  EXPECT_EQ(Triple::MeeGo, T.getVendor());
++  EXPECT_EQ(Triple::Linux, T.getOS());
++  EXPECT_EQ(Triple::GNUEABIHF, T.getEnvironment());
++
+   T = Triple("i586-pc-haiku");
+   EXPECT_EQ(Triple::x86, T.getArch());
+   EXPECT_EQ(Triple::PC, T.getVendor());

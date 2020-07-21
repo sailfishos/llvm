@@ -16,6 +16,7 @@ Summary: The Low Level Virtual Machine (An Optimizing Compiler Infrastructure)
 License: University of Illinois/NCSA Open Source License
 URL: http://llvm.org/
 Source: %{version}/%{name}-%{version}.tar.gz
+Patch0:	llvm-sailfishos-toolchain.patch
 Requires(post): /sbin/ldconfig
 Requires(postun): /sbin/ldconfig
 BuildRequires: cmake, ninja
@@ -40,7 +41,7 @@ Requires:       %{name} = %{version}
 LLVM Header files
 
 %prep
-%setup -q -n %{name}-%{version}/%{name}
+%autosetup -p1 -n %{name}-%{version}/%{name}
 
 %build
 pushd llvm
