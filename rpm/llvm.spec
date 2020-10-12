@@ -78,7 +78,7 @@ pushd build
 -DLLVM_UTILS_INSTALL_DIR:PATH=%{_bindir}
 
 %ninja_build
-popd build
+popd
 
 %install
 rm -rf %{buildroot}
