@@ -14,9 +14,14 @@ Version: 9.0.1
 Release: 0
 Summary: The Low Level Virtual Machine (An Optimizing Compiler Infrastructure)
 License: University of Illinois/NCSA Open Source License
-Group: Development/Tools
 URL: http://llvm.org/
 Source: %{version}/%{name}-%{version}.tar.gz
+# LLVM patch
+Patch0:	llvm-sailfishos-toolchain.patch
+# clang patches
+Patch1:	0001-ToolChain-Add-lgcc_s-to-the-linker-flags-when-using-.patch
+Patch2:	0001-Make-funwind-tables-the-default-for-all-archs.patch
+Patch3:	clang-sailfishos-toolchain.patch
 Requires(post): /sbin/ldconfig
 Requires(postun): /sbin/ldconfig
 BuildRequires: cmake, ninja
@@ -41,9 +46,10 @@ Requires:       %{name} = %{version}
 LLVM Header files
 
 %prep
-%setup -q -n %{name}-%{version}/%{name}/llvm
+%autosetup -p1 -n %{name}-%{version}/%{name}
 
 %build
+pushd llvm
 
 mkdir -p build
 pushd build
@@ -80,9 +86,15 @@ pushd build
 %ninja_build
 popd
 
+popd
+
 %install
+pushd llvm
+
 rm -rf %{buildroot}
 %ninja_install -C build
+
+popd
 
 %post -p /sbin/ldconfig
 
@@ -90,6 +102,7 @@ rm -rf %{buildroot}
 
 %files
 %defattr(-, root, root)
+%license llvm/LICENSE.TXT
 %{_bindir}/*
 %{_libdir}/*.so.*
 %{_libdir}/libLLVM-*.so
