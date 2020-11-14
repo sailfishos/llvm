@@ -12,10 +12,10 @@ provides this implementation.
  2 files changed, 3 insertions(+), 2 deletions(-)
 
 diff --git a/clang/lib/Driver/ToolChain.cpp b/clang/lib/Driver/ToolChain.cpp
-index 88a627e..cb99844 100644
+index 18400d9def5..3b455c26554 100644
 --- a/clang/lib/Driver/ToolChain.cpp
 +++ b/clang/lib/Driver/ToolChain.cpp
-@@ -767,6 +767,7 @@ void ToolChain::AddCXXStdlibLibArgs(const ArgList &Args,
+@@ -895,6 +895,7 @@ void ToolChain::AddCXXStdlibLibArgs(const ArgList &Args,
    switch (Type) {
    case ToolChain::CST_Libcxx:
      CmdArgs.push_back("-lc++");
@@ -24,7 +24,7 @@ index 88a627e..cb99844 100644
  
    case ToolChain::CST_Libstdcxx:
 diff --git a/clang/test/Driver/netbsd.cpp b/clang/test/Driver/netbsd.cpp
-index 4af7d83..ff18c62 100644
+index 4af7d8373d6..ff18c627f56 100644
 --- a/clang/test/Driver/netbsd.cpp
 +++ b/clang/test/Driver/netbsd.cpp
 @@ -131,7 +131,7 @@

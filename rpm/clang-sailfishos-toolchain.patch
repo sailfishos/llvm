@@ -1,8 +1,8 @@
 diff --git a/clang/include/clang/Driver/Distro.h b/clang/include/clang/Driver/Distro.h
-index 67dc764fb7d..2ae6c555515 100644
+index d382cf77a8b..8c06919f1d3 100644
 --- a/clang/include/clang/Driver/Distro.h
 +++ b/clang/include/clang/Driver/Distro.h
-@@ -41,6 +41,7 @@ public:
+@@ -42,6 +42,7 @@ public:
      Fedora,
      Gentoo,
      OpenSUSE,
@@ -10,7 +10,7 @@ index 67dc764fb7d..2ae6c555515 100644
      UbuntuHardy,
      UbuntuIntrepid,
      UbuntuJaunty,
-@@ -117,6 +118,10 @@ public:
+@@ -119,6 +120,10 @@ public:
      return DistroVal >= DebianLenny && DistroVal <= DebianBullseye;
    }
  
@@ -19,13 +19,13 @@ index 67dc764fb7d..2ae6c555515 100644
 +  }
 +
    bool IsUbuntu() const {
-     return DistroVal >= UbuntuHardy && DistroVal <= UbuntuEoan;
+     return DistroVal >= UbuntuHardy && DistroVal <= UbuntuFocal;
    }
 diff --git a/clang/lib/Driver/Distro.cpp b/clang/lib/Driver/Distro.cpp
-index f2a3074d1e7..b9971b63a81 100644
+index 06707fefc9d..cf14a4073fd 100644
 --- a/clang/lib/Driver/Distro.cpp
 +++ b/clang/lib/Driver/Distro.cpp
-@@ -145,6 +145,9 @@ static Distro::DistroType DetectDistro(llvm::vfs::FileSystem &VFS) {
+@@ -163,6 +163,9 @@ static Distro::DistroType DetectDistro(llvm::vfs::FileSystem &VFS,
    if (VFS.exists("/etc/gentoo-release"))
      return Distro::Gentoo;
  
@@ -36,10 +36,10 @@ index f2a3074d1e7..b9971b63a81 100644
  }
  
 diff --git a/clang/lib/Driver/ToolChains/Gnu.cpp b/clang/lib/Driver/ToolChains/Gnu.cpp
-index 33cdd3585c2..e1890849100 100644
+index e8ef881e89a..1bad4f13226 100644
 --- a/clang/lib/Driver/ToolChains/Gnu.cpp
 +++ b/clang/lib/Driver/ToolChains/Gnu.cpp
-@@ -1927,7 +1927,7 @@ void Generic_GCC::GCCInstallationDetector::AddDefaultGCCPrefixes(
+@@ -1999,7 +1999,7 @@ void Generic_GCC::GCCInstallationDetector::AddDefaultGCCPrefixes(
    static const char *const AArch64LibDirs[] = {"/lib64", "/lib"};
    static const char *const AArch64Triples[] = {
        "aarch64-none-linux-gnu", "aarch64-linux-gnu", "aarch64-redhat-linux",
@@ -48,7 +48,7 @@ index 33cdd3585c2..e1890849100 100644
    static const char *const AArch64beLibDirs[] = {"/lib"};
    static const char *const AArch64beTriples[] = {"aarch64_be-none-linux-gnu",
                                                   "aarch64_be-linux-gnu"};
-@@ -1937,6 +1937,7 @@ void Generic_GCC::GCCInstallationDetector::AddDefaultGCCPrefixes(
+@@ -2009,6 +2009,7 @@ void Generic_GCC::GCCInstallationDetector::AddDefaultGCCPrefixes(
                                             "arm-linux-androideabi"};
    static const char *const ARMHFTriples[] = {"arm-linux-gnueabihf",
                                               "armv7hl-redhat-linux-gnueabi",
@@ -56,7 +56,7 @@ index 33cdd3585c2..e1890849100 100644
                                               "armv6hl-suse-linux-gnueabi",
                                               "armv7hl-suse-linux-gnueabi"};
    static const char *const ARMebLibDirs[] = {"/lib"};
-@@ -1964,7 +1965,7 @@ void Generic_GCC::GCCInstallationDetector::AddDefaultGCCPrefixes(
+@@ -2036,7 +2037,7 @@ void Generic_GCC::GCCInstallationDetector::AddDefaultGCCPrefixes(
        "i586-redhat-linux",    "i386-redhat-linux",     "i586-suse-linux",
        "i486-slackware-linux", "i686-montavista-linux", "i586-linux-gnu",
        "i686-linux-android",   "i386-gnu",              "i486-gnu",
@@ -66,7 +66,7 @@ index 33cdd3585c2..e1890849100 100644
    static const char *const MIPSLibDirs[] = {"/lib"};
    static const char *const MIPSTriples[] = {
 diff --git a/clang/lib/Driver/ToolChains/Linux.cpp b/clang/lib/Driver/ToolChains/Linux.cpp
-index 7f59bc77f52..9cf648e2c08 100644
+index 6532c899492..3fa0bea23bd 100644
 --- a/clang/lib/Driver/ToolChains/Linux.cpp
 +++ b/clang/lib/Driver/ToolChains/Linux.cpp
 @@ -248,7 +248,7 @@ Linux::Linux(const Driver &D, const llvm::Triple &Triple, const ArgList &Args)

@@ -1,34 +1,37 @@
-%global maj_ver 9
+%global maj_ver 10
 %global min_ver 0
 %global patch_ver 1
 
 %global clang_tools_binaries \
-	%{_bindir}/clangd \
 	%{_bindir}/clang-apply-replacements \
 	%{_bindir}/clang-change-namespace \
+	%{_bindir}/clang-check \
 	%{_bindir}/clang-doc \
+	%{_bindir}/clang-extdef-mapping \
+	%{_bindir}/clang-format \
+	%{_bindir}/clang-import-test \
 	%{_bindir}/clang-include-fixer \
+	%{_bindir}/clang-move \
+	%{_bindir}/clang-offload-bundler \
+	%{_bindir}/clang-offload-wrapper \
 	%{_bindir}/clang-query \
 	%{_bindir}/clang-refactor \
 	%{_bindir}/clang-reorder-fields \
 	%{_bindir}/clang-rename \
-	%{_bindir}/clang-tidy
+	%{_bindir}/clang-scan-deps \
+	%{_bindir}/clang-tidy \
+	%{_bindir}/clangd \
+	%{_bindir}/diagtool \
+	%{_bindir}/hmaptool \
+	%{_bindir}/pp-trace
 
 %global clang_binaries \
 	%{_bindir}/clang \
 	%{_bindir}/clang++ \
 	%{_bindir}/clang-%{maj_ver} \
 	%{_bindir}/clang++-%{maj_ver} \
-	%{_bindir}/clang-check \
 	%{_bindir}/clang-cl \
-	%{_bindir}/clang-cpp \
-	%{_bindir}/clang-extdef-mapping \
-	%{_bindir}/clang-format \
-	%{_bindir}/clang-import-test \
-	%{_bindir}/clang-offload-bundler \
-	%{_bindir}/clang-scan-deps \
-	%{_bindir}/diagtool \
-	%{_bindir}/hmaptool
+	%{_bindir}/clang-cpp
 
 Name:		clang
 Version:	%{maj_ver}.%{min_ver}.%{patch_ver}
@@ -195,9 +198,6 @@ popd
 %files
 %license clang/LICENSE.TXT
 %{clang_binaries}
-%{_bindir}/c-index-test
-%{_datadir}/clang/clang-format.py*
-%{_datadir}/clang/clang-format-diff.py*
 %{_libdir}/clang/
 %{_libdir}/*.so.*
 
@@ -218,8 +218,11 @@ popd
 
 %files tools-extra
 %{clang_tools_binaries}
+%{_bindir}/c-index-test
 %{_bindir}/find-all-symbols
 %{_bindir}/modularize
+%{_datadir}/clang/clang-format.py*
+%{_datadir}/clang/clang-format-diff.py*
 %{_datadir}/clang/clang-include-fixer.py*
 %{_datadir}/clang/clang-tidy-diff.py*
 %{_datadir}/clang/run-clang-tidy.py*
