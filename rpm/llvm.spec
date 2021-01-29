@@ -26,6 +26,7 @@ Requires(post): /sbin/ldconfig
 Requires(postun): /sbin/ldconfig
 BuildRequires: cmake, ninja
 BuildRequires: gcc, python3-base
+Requires: %{name}-libs = %{version}-%{release}
 
 %description
 LLVM is a compiler infrastructure designed for compile-time, link-time, runtime,
@@ -37,10 +38,16 @@ languages is in development. The compiler infrastructure
 includes mirror sets of programming tools as well as libraries with equivalent
 functionality.
 
+%package libs
+Summary:        LLVM shared libraries
+
+%description libs
+Shared libraries for the LLVM compiler infrastructure.
+
 %package devel
 Summary:        Libraries and Header Files for LLVM
 Group:          Development/Tools
-Requires:       %{name} = %{version}
+Requires:       %{name} = %{version}-%{release}
 
 %description devel
 LLVM Header files
@@ -104,9 +111,12 @@ popd
 %defattr(-, root, root)
 %license llvm/LICENSE.TXT
 %{_bindir}/*
+%{_datadir}/opt-viewer
+
+%files libs
+%license llvm/LICENSE.TXT
 %{_libdir}/*.so.*
 %{_libdir}/libLLVM-*.so
-%{_datadir}/opt-viewer
 
 %files devel
 %defattr(-, root, root)

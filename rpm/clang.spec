@@ -63,6 +63,7 @@ Requires:	libstdc++-devel
 Requires:	gcc-c++
 
 Provides:	clang(major) = %{maj_ver}
+Requires:	%{name}-libs%{?_isa} = %{version}-%{release}
 
 %description
 clang: noun
@@ -74,11 +75,17 @@ The goal of the Clang project is to create a new C, C++, Objective C
 and Objective C++ front-end for the LLVM compiler. Its tools are built
 as libraries and designed to be loosely-coupled and extensible.
 
+%package libs
+Summary:	Runtime library for clang
+
+%description libs
+Runtime library for clang.
+
 %package devel
-Summary: Development header files for clang
-Requires: %{name}%{?_isa} = %{version}-%{release}
+Summary:	Development header files for clang
+Requires:	%{name}%{?_isa} = %{version}-%{release}
 # The clang CMake files reference tools from clang-tools-extra.
-Requires: %{name}-tools-extra%{?_isa} = %{version}-%{release}
+Requires:	%{name}-tools-extra%{?_isa} = %{version}-%{release}
 
 %description devel
 Development header files for clang.
@@ -198,6 +205,9 @@ popd
 %files
 %license clang/LICENSE.TXT
 %{clang_binaries}
+
+%files libs
+%license clang/LICENSE.TXT
 %{_libdir}/clang/
 %{_libdir}/*.so.*
 
