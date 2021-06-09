@@ -54,7 +54,7 @@ BuildRequires:	cmake
 BuildRequires:	ninja
 BuildRequires:	llvm-devel
 BuildRequires:	libxml2-devel
-BuildRequires:	python3-base
+BuildRequires:	python3-devel
 
 # clang requires gcc, clang++ requires libstdc++-devel
 # - https://bugzilla.redhat.com/show_bug.cgi?id=1021645
