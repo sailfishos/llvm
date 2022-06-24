@@ -1,6 +1,6 @@
-%global maj_ver 10
+%global maj_ver 14
 %global min_ver 0
-%global patch_ver 1
+%global patch_ver 6
 
 %global clang_tools_binaries \
 	%{_bindir}/clang-apply-replacements \
@@ -9,21 +9,24 @@
 	%{_bindir}/clang-doc \
 	%{_bindir}/clang-extdef-mapping \
 	%{_bindir}/clang-format \
-	%{_bindir}/clang-import-test \
 	%{_bindir}/clang-include-fixer \
 	%{_bindir}/clang-move \
 	%{_bindir}/clang-offload-bundler \
 	%{_bindir}/clang-offload-wrapper \
+	%{_bindir}/clang-linker-wrapper \
+	%{_bindir}/clang-nvlink-wrapper \
 	%{_bindir}/clang-query \
 	%{_bindir}/clang-refactor \
 	%{_bindir}/clang-reorder-fields \
 	%{_bindir}/clang-rename \
+	%{_bindir}/clang-repl \
 	%{_bindir}/clang-scan-deps \
 	%{_bindir}/clang-tidy \
 	%{_bindir}/clangd \
 	%{_bindir}/diagtool \
 	%{_bindir}/hmaptool \
-	%{_bindir}/pp-trace
+	%{_bindir}/pp-trace \
+	%{_bindir}/run-clang-tidy
 
 %global clang_binaries \
 	%{_bindir}/clang \
@@ -41,12 +44,11 @@ License:	NCSA
 URL:		http://llvm.org
 Source:		%{version}/%{name}-%{version}.tar.gz
 
-# LLVM patch
-Patch0:	llvm-sailfishos-toolchain.patch
-# clang patches
-Patch1:	0001-ToolChain-Add-lgcc_s-to-the-linker-flags-when-using-.patch
-Patch2:	0001-Make-funwind-tables-the-default-for-all-archs.patch
-Patch3:	clang-sailfishos-toolchain.patch
+Patch1: 0001-LLVM-Add-MeeGo-vendor-type.patch
+Patch2: 0002-Add-Triple-isMeeGo.patch
+Patch3: 0003-Clang-SailfishOS-toolchain.patch
+Patch4: 0004-Make-funwind-tables-the-default-for-all-archs.patch
+Patch5: 0005-Disable-out-of-line-atomics-on-MeeGo.patch
 
 BuildRequires:	gcc
 BuildRequires:	gcc-c++
@@ -109,6 +111,13 @@ Requires:	%{name}%{?_isa} = %{version}-%{release}
 %description tools-extra
 A set of extra tools built using Clang's tooling API.
 
+%package tools-extra-devel
+Summary: Development header files for clang tools
+Requires: %{name}-tools-extra = %{version}-%{release}
+
+%description tools-extra-devel
+Development header files for clang tools.
+
 
 %prep
 %autosetup -p1 -n %{name}-%{version}/llvm
@@ -161,7 +170,8 @@ pushd build
 	-DCLANG_LINK_CLANG_DYLIB=ON \
 	-DSPHINX_WARNINGS_AS_ERRORS=OFF \
 	-DBUILD_SHARED_LIBS=OFF \
-	-DCLANG_BUILD_EXAMPLES:BOOL=OFF
+	-DCLANG_BUILD_EXAMPLES:BOOL=OFF \
+	-DCLANG_DEFAULT_UNWINDLIB=libgcc
 
 %ninja_build
 popd
@@ -172,6 +182,11 @@ popd
 pushd clang
 
 %ninja_install -C build
+
+mkdir -p %{buildroot}%{python3_sitelib}/clang/
+
+# install scanbuild-py to python sitelib.
+mv %{buildroot}%{_prefix}/lib/{libear,libscanbuild} %{buildroot}%{python3_sitelib}
 
 # remove editor integrations (bbedit, sublime, emacs, vim)
 rm -vf %{buildroot}%{_datadir}/clang/clang-format-bbedit.applescript
@@ -221,10 +236,19 @@ popd
 %files analyzer
 %{_bindir}/scan-view
 %{_bindir}/scan-build
+%{_bindir}/analyze-build
+%{_bindir}/intercept-build
+%{_bindir}/scan-build-py
 %{_libexecdir}/ccc-analyzer
 %{_libexecdir}/c++-analyzer
+%{_libexecdir}/analyze-c++
+%{_libexecdir}/analyze-cc
+%{_libexecdir}/intercept-c++
+%{_libexecdir}/intercept-cc
 %{_datadir}/scan-view/
 %{_datadir}/scan-build/
+%{python3_sitelib}/libear
+%{python3_sitelib}/libscanbuild
 
 %files tools-extra
 %{clang_tools_binaries}
@@ -235,6 +259,8 @@ popd
 %{_datadir}/clang/clang-format-diff.py*
 %{_datadir}/clang/clang-include-fixer.py*
 %{_datadir}/clang/clang-tidy-diff.py*
-%{_datadir}/clang/run-clang-tidy.py*
 %{_datadir}/clang/run-find-all-symbols.py*
 %{_datadir}/clang/clang-rename.py*
+
+%files tools-extra-devel
+%{_includedir}/clang-tidy/
