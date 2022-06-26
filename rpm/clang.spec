@@ -1,6 +1,6 @@
-%global maj_ver 10
+%global maj_ver 14
 %global min_ver 0
-%global patch_ver 1
+%global patch_ver 5
 
 %global clang_tools_binaries \
 	%{_bindir}/clang-apply-replacements \
@@ -41,12 +41,12 @@ License:	NCSA
 URL:		http://llvm.org
 Source:		%{version}/%{name}-%{version}.tar.gz
 
-# LLVM patch
-Patch0:	llvm-sailfishos-toolchain.patch
-# clang patches
-Patch1:	0001-ToolChain-Add-lgcc_s-to-the-linker-flags-when-using-.patch
-Patch2:	0001-Make-funwind-tables-the-default-for-all-archs.patch
-Patch3:	clang-sailfishos-toolchain.patch
+Patch1: 0001-LLVM-Add-MeeGo-vendor-type.patch
+Patch2: 0002-Add-Triple-isMeeGo.patch
+Patch3: 0003-Clang-SailfishOS-toolchain.patch
+Patch4: 0004-Make-funwind-tables-the-default-for-all-archs.patch
+Patch5: 0005-ToolChain-Add-lgcc_s-to-the-linker-flags-when-using-.patch
+Patch6: 0006-Disable-out-of-line-atomics-on-MeeGo.patch
 
 BuildRequires:	gcc
 BuildRequires:	gcc-c++
