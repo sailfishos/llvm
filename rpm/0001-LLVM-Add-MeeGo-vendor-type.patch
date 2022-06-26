@@ -1,8 +1,19 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Ruben De Smet <ruben.de.smet@rubdos.be>
+Date: Sun, 26 Jun 2022 10:48:13 +0200
+Subject: [PATCH] LLVM: Add MeeGo vendor type
+
+---
+ llvm/include/llvm/ADT/Triple.h    |  3 ++-
+ llvm/lib/Support/Triple.cpp       | 12 ++++++++++++
+ llvm/unittests/ADT/TripleTest.cpp |  6 ++++++
+ 3 files changed, 20 insertions(+), 1 deletion(-)
+
 diff --git a/llvm/include/llvm/ADT/Triple.h b/llvm/include/llvm/ADT/Triple.h
-index 76a754d671f..6ee7f680dee 100644
+index 42277c013035954dfe6e4c9359dc9ccc68b7d8cd..9e36dfd4d2d570cdaf54d9c07aa60b05d4ab8476 100644
 --- a/llvm/include/llvm/ADT/Triple.h
 +++ b/llvm/include/llvm/ADT/Triple.h
-@@ -152,7 +152,8 @@ public:
+@@ -165,7 +165,8 @@ public:
      Mesa,
      SUSE,
      OpenEmbedded,
@@ -13,10 +24,10 @@ index 76a754d671f..6ee7f680dee 100644
    enum OSType {
      UnknownOS,
 diff --git a/llvm/lib/Support/Triple.cpp b/llvm/lib/Support/Triple.cpp
-index 2c480c1094a..e7d399bfa4f 100644
+index a9afcc9db96ab5910c7c739557fd1c1aa2d5a8cd..c4307bf457c7cf944eec330364f5b3a752b1857f 100644
 --- a/llvm/lib/Support/Triple.cpp
 +++ b/llvm/lib/Support/Triple.cpp
-@@ -162,6 +162,7 @@ StringRef Triple::getVendorTypeName(VendorType Kind) {
+@@ -177,6 +177,7 @@ StringRef Triple::getVendorTypeName(VendorType Kind) {
    case Freescale: return "fsl";
    case IBM: return "ibm";
    case ImaginationTechnologies: return "img";
@@ -24,7 +35,7 @@ index 2c480c1094a..e7d399bfa4f 100644
    case Mesa: return "mesa";
    case MipsTechnologies: return "mti";
    case Myriad: return "myriad";
-@@ -479,6 +480,7 @@ static Triple::VendorType parseVendor(StringRef VendorName) {
+@@ -507,6 +508,7 @@ static Triple::VendorType parseVendor(StringRef VendorName) {
      .Case("mesa", Triple::Mesa)
      .Case("suse", Triple::SUSE)
      .Case("oe", Triple::OpenEmbedded)
@@ -32,7 +43,7 @@ index 2c480c1094a..e7d399bfa4f 100644
      .Default(Triple::UnknownVendor);
  }
  
-@@ -743,6 +745,9 @@ Triple::Triple(const Twine &Str)
+@@ -802,6 +804,9 @@ Triple::Triple(const Twine &Str)
          OS = parseOS(Components[2]);
          if (Components.size() > 3) {
            Environment = parseEnvironment(Components[3]);
@@ -42,7 +53,7 @@ index 2c480c1094a..e7d399bfa4f 100644
            ObjectFormat = parseFormat(Components[3]);
          }
        }
-@@ -794,6 +799,10 @@ Triple::Triple(const Twine &ArchStr, const Twine &VendorStr, const Twine &OSStr,
+@@ -853,6 +858,10 @@ Triple::Triple(const Twine &ArchStr, const Twine &VendorStr, const Twine &OSStr,
        ObjectFormat(parseFormat(EnvironmentStr.str())) {
    if (ObjectFormat == Triple::UnknownObjectFormat)
      ObjectFormat = getDefaultFormat(*this);
@@ -53,8 +64,8 @@ index 2c480c1094a..e7d399bfa4f 100644
  }
  
  std::string Triple::normalize(StringRef Str) {
-@@ -1056,6 +1065,9 @@ void Triple::getEnvironmentVersion(unsigned &Major, unsigned &Minor,
-                                    unsigned &Micro) const {
+@@ -1103,6 +1112,9 @@ static VersionTuple parseVersionFromName(StringRef Name) {
+ VersionTuple Triple::getEnvironmentVersion() const {
    StringRef EnvironmentName = getEnvironmentName();
    StringRef EnvironmentTypeName = getEnvironmentTypeName(getEnvironment());
 +  // MeeGo uses "gnueabi" to mean "gnueabihf"
@@ -64,10 +75,10 @@ index 2c480c1094a..e7d399bfa4f 100644
      EnvironmentName = EnvironmentName.substr(EnvironmentTypeName.size());
  
 diff --git a/llvm/unittests/ADT/TripleTest.cpp b/llvm/unittests/ADT/TripleTest.cpp
-index ef7f82d268e..5f9c04832ec 100644
+index 3006ab6d40e85e3fda02d163954a93262191cd68..7a28ed624232ee0c195ffa41c927c02cb8dd28e3 100644
 --- a/llvm/unittests/ADT/TripleTest.cpp
 +++ b/llvm/unittests/ADT/TripleTest.cpp
-@@ -355,6 +355,12 @@ TEST(TripleTest, ParsedIDs) {
+@@ -384,6 +384,12 @@ TEST(TripleTest, ParsedIDs) {
    EXPECT_EQ(Triple::Linux, T.getOS());
    EXPECT_EQ(Triple::GNUEABI, T.getEnvironment());
  
