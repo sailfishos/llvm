@@ -9,21 +9,24 @@
 	%{_bindir}/clang-doc \
 	%{_bindir}/clang-extdef-mapping \
 	%{_bindir}/clang-format \
-	%{_bindir}/clang-import-test \
 	%{_bindir}/clang-include-fixer \
 	%{_bindir}/clang-move \
 	%{_bindir}/clang-offload-bundler \
 	%{_bindir}/clang-offload-wrapper \
+	%{_bindir}/clang-linker-wrapper \
+	%{_bindir}/clang-nvlink-wrapper \
 	%{_bindir}/clang-query \
 	%{_bindir}/clang-refactor \
 	%{_bindir}/clang-reorder-fields \
 	%{_bindir}/clang-rename \
+	%{_bindir}/clang-repl \
 	%{_bindir}/clang-scan-deps \
 	%{_bindir}/clang-tidy \
 	%{_bindir}/clangd \
 	%{_bindir}/diagtool \
 	%{_bindir}/hmaptool \
-	%{_bindir}/pp-trace
+	%{_bindir}/pp-trace \
+	%{_bindir}/run-clang-tidy
 
 %global clang_binaries \
 	%{_bindir}/clang \
@@ -109,6 +112,13 @@ Requires:	%{name}%{?_isa} = %{version}-%{release}
 %description tools-extra
 A set of extra tools built using Clang's tooling API.
 
+%package tools-extra-devel
+Summary: Development header files for clang tools
+Requires: %{name}-tools-extra = %{version}-%{release}
+
+%description tools-extra-devel
+Development header files for clang tools.
+
 
 %prep
 %autosetup -p1 -n %{name}-%{version}/llvm
@@ -173,6 +183,11 @@ pushd clang
 
 %ninja_install -C build
 
+mkdir -p %{buildroot}%{python3_sitelib}/clang/
+
+# install scanbuild-py to python sitelib.
+mv %{buildroot}%{_prefix}/lib/{libear,libscanbuild} %{buildroot}%{python3_sitelib}
+
 # remove editor integrations (bbedit, sublime, emacs, vim)
 rm -vf %{buildroot}%{_datadir}/clang/clang-format-bbedit.applescript
 rm -vf %{buildroot}%{_datadir}/clang/clang-format-sublime.py*
@@ -221,10 +236,19 @@ popd
 %files analyzer
 %{_bindir}/scan-view
 %{_bindir}/scan-build
+%{_bindir}/analyze-build
+%{_bindir}/intercept-build
+%{_bindir}/scan-build-py
 %{_libexecdir}/ccc-analyzer
 %{_libexecdir}/c++-analyzer
+%{_libexecdir}/analyze-c++
+%{_libexecdir}/analyze-cc
+%{_libexecdir}/intercept-c++
+%{_libexecdir}/intercept-cc
 %{_datadir}/scan-view/
 %{_datadir}/scan-build/
+%{python3_sitelib}/libear
+%{python3_sitelib}/libscanbuild
 
 %files tools-extra
 %{clang_tools_binaries}
@@ -235,6 +259,8 @@ popd
 %{_datadir}/clang/clang-format-diff.py*
 %{_datadir}/clang/clang-include-fixer.py*
 %{_datadir}/clang/clang-tidy-diff.py*
-%{_datadir}/clang/run-clang-tidy.py*
 %{_datadir}/clang/run-find-all-symbols.py*
 %{_datadir}/clang/clang-rename.py*
+
+%files tools-extra-devel
+%{_includedir}/clang-tidy/
