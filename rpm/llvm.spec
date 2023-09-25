@@ -10,7 +10,7 @@
 %endif
 
 Name: llvm
-Version: 15.0.7
+Version: 16.0.6
 Release: 0
 Summary: The Low Level Virtual Machine (An Optimizing Compiler Infrastructure)
 License: University of Illinois/NCSA Open Source License
