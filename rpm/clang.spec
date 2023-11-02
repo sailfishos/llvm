@@ -49,6 +49,7 @@ Patch2: 0002-Add-Triple-isMeeGo.patch
 Patch3: 0003-Clang-SailfishOS-toolchain.patch
 Patch4: 0004-Make-funwind-tables-the-default-for-all-archs.patch
 Patch5: 0005-Disable-out-of-line-atomics-on-MeeGo.patch
+Patch6:	0006-PATCH-lld-Import-compact_unwind_encoding.h-from-libu.patch
 
 BuildRequires:	gcc
 BuildRequires:	gcc-c++
