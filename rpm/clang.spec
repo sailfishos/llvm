@@ -1,6 +1,6 @@
-%global maj_ver 14
+%global maj_ver 15
 %global min_ver 0
-%global patch_ver 6
+%global patch_ver 7
 
 %global clang_tools_binaries \
 	%{_bindir}/clang-apply-replacements \
@@ -10,11 +10,13 @@
 	%{_bindir}/clang-extdef-mapping \
 	%{_bindir}/clang-format \
 	%{_bindir}/clang-include-fixer \
-	%{_bindir}/clang-move \
-	%{_bindir}/clang-offload-bundler \
-	%{_bindir}/clang-offload-wrapper \
 	%{_bindir}/clang-linker-wrapper \
+	%{_bindir}/clang-move \
 	%{_bindir}/clang-nvlink-wrapper \
+	%{_bindir}/clang-offload-bundler \
+	%{_bindir}/clang-offload-packager \
+	%{_bindir}/clang-offload-wrapper \
+	%{_bindir}/clang-pseudo \
 	%{_bindir}/clang-query \
 	%{_bindir}/clang-refactor \
 	%{_bindir}/clang-reorder-fields \
