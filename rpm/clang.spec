@@ -1,6 +1,6 @@
-%global maj_ver 15
+%global maj_ver 16
 %global min_ver 0
-%global patch_ver 7
+%global patch_ver 6
 
 %global clang_tools_binaries \
 	%{_bindir}/clang-apply-replacements \
@@ -153,7 +153,7 @@ pushd build
 %endif
 	-DCLANG_INCLUDE_TESTS:BOOL=OFF \
 	-DLLVM_MAIN_SRC_DIR=%{_datadir}/llvm/src \
-%if 0%{?__isa_bits} == 64
+%ifarch aarch64
 	-DLLVM_LIBDIR_SUFFIX=64 \
 %else
 	-DLLVM_LIBDIR_SUFFIX= \

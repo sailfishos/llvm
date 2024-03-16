@@ -3,15 +3,16 @@ From: Ruben De Smet <ruben.de.smet@rubdos.be>
 Date: Sun, 26 Jun 2022 10:42:13 +0200
 Subject: [PATCH] Disable out-of-line atomics on MeeGo
 
+Co-authored-by: Matti Viljanen <matti.viljanen@kapsi.fi>
 ---
  clang/lib/Driver/ToolChains/Linux.cpp | 2 ++
  1 file changed, 2 insertions(+)
 
 diff --git a/clang/lib/Driver/ToolChains/Linux.cpp b/clang/lib/Driver/ToolChains/Linux.cpp
-index e7c2dcaef02a..9b377eca9dc8 100644
+index 72ef4fff4400f08cf429c1072f7edb69d8e440f5..8ede9b7ce1fd234718390c3b4356521c0763950d 100644
 --- a/clang/lib/Driver/ToolChains/Linux.cpp
 +++ b/clang/lib/Driver/ToolChains/Linux.cpp
-@@ -672,6 +672,8 @@ bool Linux::IsAArch64OutlineAtomicsDefault(const ArgList &Args) const {
+@@ -725,6 +725,8 @@ bool Linux::IsAArch64OutlineAtomicsDefault(const ArgList &Args) const {
    // and libgcc since 9.3.1
    assert(getTriple().isAArch64() && "expected AArch64 target!");
    ToolChain::RuntimeLibType RtLib = GetRuntimeLibType(Args);

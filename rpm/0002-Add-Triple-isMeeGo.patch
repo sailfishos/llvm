@@ -3,15 +3,16 @@ From: Ruben De Smet <ruben.de.smet@rubdos.be>
 Date: Sun, 26 Jun 2022 10:41:44 +0200
 Subject: [PATCH] Add Triple::isMeeGo()
 
+Co-authored-by: Matti Viljanen <matti.viljanen@kapsi.fi>
 ---
- llvm/include/llvm/ADT/Triple.h | 3 +++
+ llvm/include/llvm/TargetParser/Triple.h | 3 +++
  1 file changed, 3 insertions(+)
 
-diff --git a/llvm/include/llvm/ADT/Triple.h b/llvm/include/llvm/ADT/Triple.h
-index 9e36dfd4d2d5..8e66888615ff 100644
---- a/llvm/include/llvm/ADT/Triple.h
-+++ b/llvm/include/llvm/ADT/Triple.h
-@@ -657,6 +657,9 @@ public:
+diff --git a/llvm/include/llvm/TargetParser/Triple.h b/llvm/include/llvm/TargetParser/Triple.h
+index 5bddc2a52c05172ce444c607b42d037fbc835267..978a4231cfd81ea543f810d089f4f702b60b465e 100644
+--- a/llvm/include/llvm/TargetParser/Triple.h
++++ b/llvm/include/llvm/TargetParser/Triple.h
+@@ -724,6 +724,9 @@ public:
    /// Tests whether the target is Android
    bool isAndroid() const { return getEnvironment() == Triple::Android; }
  

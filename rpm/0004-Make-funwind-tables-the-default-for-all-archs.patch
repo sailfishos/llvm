@@ -3,34 +3,35 @@ From: serge-sans-paille <sguelton@redhat.com>
 Date: Tue, 10 Dec 2019 09:18:03 +0000
 Subject: [PATCH] Make -funwind-tables the default for all archs
 
+Co-authored-by: Matti Viljanen <matti.viljanen@kapsi.fi>
 ---
  clang/lib/Driver/ToolChain.cpp      | 2 +-
  clang/lib/Driver/ToolChains/Gnu.cpp | 3 +++
  2 files changed, 4 insertions(+), 1 deletion(-)
 
 diff --git a/clang/lib/Driver/ToolChain.cpp b/clang/lib/Driver/ToolChain.cpp
-index d657d21bfcdb..eac667382fa9 100644
+index bc70205a6c01eb06a27cb6cd590da93318527bc5..bfd34869913f734cae98252da61572bd73d56f19 100644
 --- a/clang/lib/Driver/ToolChain.cpp
 +++ b/clang/lib/Driver/ToolChain.cpp
-@@ -258,7 +258,7 @@ std::string ToolChain::getInputFilename(const InputInfo &Input) const {
- }
+@@ -324,7 +324,7 @@ std::string ToolChain::getInputFilename(const InputInfo &Input) const {
  
- bool ToolChain::IsUnwindTablesDefault(const ArgList &Args) const {
--  return false;
-+  return true;
+ ToolChain::UnwindTableLevel
+ ToolChain::getDefaultUnwindTableLevel(const ArgList &Args) const {
+-  return UnwindTableLevel::None;
++  return UnwindTableLevel::Asynchronous;
  }
  
  Tool *ToolChain::getClang() const {
 diff --git a/clang/lib/Driver/ToolChains/Gnu.cpp b/clang/lib/Driver/ToolChains/Gnu.cpp
-index e7f57c824961..9c44b2e741ce 100644
+index 814f3482a1b598b24e4b3f63d811666791a6e260..c492e45a2d0b52905234c83c193237999180277b 100644
 --- a/clang/lib/Driver/ToolChains/Gnu.cpp
 +++ b/clang/lib/Driver/ToolChains/Gnu.cpp
-@@ -2692,6 +2692,9 @@ void Generic_GCC::printVerboseInfo(raw_ostream &OS) const {
- }
+@@ -2857,6 +2857,9 @@ void Generic_GCC::printVerboseInfo(raw_ostream &OS) const {
  
- bool Generic_GCC::IsUnwindTablesDefault(const ArgList &Args) const {
+ ToolChain::UnwindTableLevel
+ Generic_GCC::getDefaultUnwindTableLevel(const ArgList &Args) const {
 +  if (getTriple().isMeeGo()) {
-+    return true;
++    return UnwindTableLevel::Asynchronous;
 +  }
    switch (getArch()) {
    case llvm::Triple::aarch64:
