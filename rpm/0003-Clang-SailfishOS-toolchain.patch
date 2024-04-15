@@ -12,10 +12,10 @@ Signed-off-by: Ruben De Smet <ruben.de.smet@rubdos.be>
  4 files changed, 15 insertions(+), 5 deletions(-)
 
 diff --git a/clang/include/clang/Driver/Distro.h b/clang/include/clang/Driver/Distro.h
-index 2723f75e8945..58616ad541e1 100644
+index 01d66b30b038..e4cbc681ffeb 100644
 --- a/clang/include/clang/Driver/Distro.h
 +++ b/clang/include/clang/Driver/Distro.h
-@@ -45,6 +45,7 @@ public:
+@@ -46,6 +46,7 @@ public:
      Fedora,
      Gentoo,
      OpenSUSE,
@@ -23,8 +23,8 @@ index 2723f75e8945..58616ad541e1 100644
      UbuntuHardy,
      UbuntuIntrepid,
      UbuntuJaunty,
-@@ -124,6 +125,10 @@ public:
-     return DistroVal >= DebianLenny && DistroVal <= DebianBookworm;
+@@ -126,6 +127,10 @@ public:
+     return DistroVal >= DebianLenny && DistroVal <= DebianTrixie;
    }
  
 +  bool IsSailfish() const {
@@ -32,13 +32,13 @@ index 2723f75e8945..58616ad541e1 100644
 +  }
 +
    bool IsUbuntu() const {
-     return DistroVal >= UbuntuHardy && DistroVal <= UbuntuJammy;
+     return DistroVal >= UbuntuHardy && DistroVal <= UbuntuKinetic;
    }
 diff --git a/clang/lib/Driver/Distro.cpp b/clang/lib/Driver/Distro.cpp
-index 5ac38c34d112..cccb2026e527 100644
+index 1898667279cc..7e395eaa12e2 100644
 --- a/clang/lib/Driver/Distro.cpp
 +++ b/clang/lib/Driver/Distro.cpp
-@@ -197,6 +197,9 @@ static Distro::DistroType DetectDistro(llvm::vfs::FileSystem &VFS) {
+@@ -200,6 +200,9 @@ static Distro::DistroType DetectDistro(llvm::vfs::FileSystem &VFS) {
    if (VFS.exists("/etc/gentoo-release"))
      return Distro::Gentoo;
  
@@ -49,10 +49,10 @@ index 5ac38c34d112..cccb2026e527 100644
  }
  
 diff --git a/clang/lib/Driver/ToolChains/Gnu.cpp b/clang/lib/Driver/ToolChains/Gnu.cpp
-index 7a9570a686f4..e7f57c824961 100644
+index 665cdc3132fb..1908962a5fc1 100644
 --- a/clang/lib/Driver/ToolChains/Gnu.cpp
 +++ b/clang/lib/Driver/ToolChains/Gnu.cpp
-@@ -2073,7 +2073,7 @@ void Generic_GCC::GCCInstallationDetector::AddDefaultGCCPrefixes(
+@@ -2178,7 +2178,7 @@ void Generic_GCC::GCCInstallationDetector::AddDefaultGCCPrefixes(
    static const char *const AArch64LibDirs[] = {"/lib64", "/lib"};
    static const char *const AArch64Triples[] = {
        "aarch64-none-linux-gnu", "aarch64-linux-gnu", "aarch64-redhat-linux",
@@ -61,7 +61,7 @@ index 7a9570a686f4..e7f57c824961 100644
    static const char *const AArch64beLibDirs[] = {"/lib"};
    static const char *const AArch64beTriples[] = {"aarch64_be-none-linux-gnu",
                                                   "aarch64_be-linux-gnu"};
-@@ -2082,6 +2082,7 @@ void Generic_GCC::GCCInstallationDetector::AddDefaultGCCPrefixes(
+@@ -2187,6 +2187,7 @@ void Generic_GCC::GCCInstallationDetector::AddDefaultGCCPrefixes(
    static const char *const ARMTriples[] = {"arm-linux-gnueabi"};
    static const char *const ARMHFTriples[] = {"arm-linux-gnueabihf",
                                               "armv7hl-redhat-linux-gnueabi",
@@ -69,7 +69,7 @@ index 7a9570a686f4..e7f57c824961 100644
                                               "armv6hl-suse-linux-gnueabi",
                                               "armv7hl-suse-linux-gnueabi"};
    static const char *const ARMebLibDirs[] = {"/lib"};
-@@ -2108,6 +2109,7 @@ void Generic_GCC::GCCInstallationDetector::AddDefaultGCCPrefixes(
+@@ -2217,6 +2218,7 @@ void Generic_GCC::GCCInstallationDetector::AddDefaultGCCPrefixes(
        "i586-linux-gnu",      "i686-linux-gnu",        "i686-pc-linux-gnu",
        "i386-redhat-linux6E", "i686-redhat-linux",     "i386-redhat-linux",
        "i586-suse-linux",     "i686-montavista-linux", "i686-gnu",
@@ -78,10 +78,10 @@ index 7a9570a686f4..e7f57c824961 100644
  
    static const char *const M68kLibDirs[] = {"/lib"};
 diff --git a/clang/lib/Driver/ToolChains/Linux.cpp b/clang/lib/Driver/ToolChains/Linux.cpp
-index 83cb41159de7..e7c2dcaef02a 100644
+index ceb1a982c3a4..c2973384b126 100644
 --- a/clang/lib/Driver/ToolChains/Linux.cpp
 +++ b/clang/lib/Driver/ToolChains/Linux.cpp
-@@ -194,7 +194,7 @@ Linux::Linux(const Driver &D, const llvm::Triple &Triple, const ArgList &Args)
+@@ -196,7 +196,7 @@ Linux::Linux(const Driver &D, const llvm::Triple &Triple, const ArgList &Args)
    }
  
    if (Distro.IsOpenSUSE() || Distro.IsUbuntu() || Distro.IsAlpineLinux() ||
@@ -90,7 +90,7 @@ index 83cb41159de7..e7c2dcaef02a 100644
      ExtraOpts.push_back("-z");
      ExtraOpts.push_back("relro");
    }
-@@ -233,13 +233,13 @@ Linux::Linux(const Driver &D, const llvm::Triple &Triple, const ArgList &Args)
+@@ -239,13 +239,13 @@ Linux::Linux(const Driver &D, const llvm::Triple &Triple, const ArgList &Args)
    // Hexagon linker/loader does not support .gnu.hash
    if (!IsMips && !IsHexagon) {
      if (Distro.IsRedhat() || Distro.IsOpenSUSE() || Distro.IsAlpineLinux() ||
@@ -106,7 +106,7 @@ index 83cb41159de7..e7c2dcaef02a 100644
          (IsAndroid && Triple.isAndroidVersionLT(23)))
        ExtraOpts.push_back("--hash-style=both");
    }
-@@ -248,7 +248,7 @@ Linux::Linux(const Driver &D, const llvm::Triple &Triple, const ArgList &Args)
+@@ -254,7 +254,7 @@ Linux::Linux(const Driver &D, const llvm::Triple &Triple, const ArgList &Args)
    ExtraOpts.push_back("--build-id");
  #endif
  
