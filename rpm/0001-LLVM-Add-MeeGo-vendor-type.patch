@@ -4,46 +4,46 @@ Date: Sun, 26 Jun 2022 10:48:13 +0200
 Subject: [PATCH] LLVM: Add MeeGo vendor type
 
 ---
- llvm/include/llvm/ADT/Triple.h    |  3 ++-
- llvm/lib/Support/Triple.cpp       | 12 ++++++++++++
- llvm/unittests/ADT/TripleTest.cpp |  6 ++++++
+ llvm/include/llvm/TargetParser/Triple.h    |  3 ++-
+ llvm/lib/TargetParser/Triple.cpp           | 12 ++++++++++++
+ llvm/unittests/TargetParser/TripleTest.cpp |  6 ++++++
  3 files changed, 20 insertions(+), 1 deletion(-)
 
-diff --git a/llvm/include/llvm/ADT/Triple.h b/llvm/include/llvm/ADT/Triple.h
-index 42277c013035..9e36dfd4d2d5 100644
---- a/llvm/include/llvm/ADT/Triple.h
-+++ b/llvm/include/llvm/ADT/Triple.h
-@@ -165,7 +165,8 @@ public:
-     Mesa,
+diff --git a/llvm/include/llvm/TargetParser/Triple.h b/llvm/include/llvm/TargetParser/Triple.h
+index 7d67966d1725..8b6e16c613db 100644
+--- a/llvm/include/llvm/TargetParser/Triple.h
++++ b/llvm/include/llvm/TargetParser/Triple.h
+@@ -194,7 +194,8 @@ public:
      SUSE,
      OpenEmbedded,
--    LastVendorType = OpenEmbedded
+     Intel,
+-    LastVendorType = Intel
 +    MeeGo,
 +    LastVendorType = MeeGo
    };
    enum OSType {
      UnknownOS,
-diff --git a/llvm/lib/Support/Triple.cpp b/llvm/lib/Support/Triple.cpp
-index a9afcc9db96a..c4307bf457c7 100644
---- a/llvm/lib/Support/Triple.cpp
-+++ b/llvm/lib/Support/Triple.cpp
-@@ -177,6 +177,7 @@ StringRef Triple::getVendorTypeName(VendorType Kind) {
-   case Freescale: return "fsl";
-   case IBM: return "ibm";
+diff --git a/llvm/lib/TargetParser/Triple.cpp b/llvm/lib/TargetParser/Triple.cpp
+index e9e6f130f757..21c3b2bff118 100644
+--- a/llvm/lib/TargetParser/Triple.cpp
++++ b/llvm/lib/TargetParser/Triple.cpp
+@@ -263,6 +263,7 @@ StringRef Triple::getVendorTypeName(VendorType Kind) {
    case ImaginationTechnologies: return "img";
+   case Intel:
+     return "intel";
 +  case MeeGo: return "meego";
    case Mesa: return "mesa";
    case MipsTechnologies: return "mti";
-   case Myriad: return "myriad";
-@@ -507,6 +508,7 @@ static Triple::VendorType parseVendor(StringRef VendorName) {
-     .Case("mesa", Triple::Mesa)
-     .Case("suse", Triple::SUSE)
-     .Case("oe", Triple::OpenEmbedded)
-+    .Case("meego", Triple::MeeGo)
-     .Default(Triple::UnknownVendor);
+   case NVIDIA: return "nvidia";
+@@ -664,6 +665,7 @@ static Triple::VendorType parseVendor(StringRef VendorName) {
+       .Case("suse", Triple::SUSE)
+       .Case("oe", Triple::OpenEmbedded)
+       .Case("intel", Triple::Intel)
++      .Case("meego", Triple::MeeGo)
+       .Default(Triple::UnknownVendor);
  }
  
-@@ -802,6 +804,9 @@ Triple::Triple(const Twine &Str)
+@@ -1028,6 +1030,9 @@ Triple::Triple(const Twine &Str)
          OS = parseOS(Components[2]);
          if (Components.size() > 3) {
            Environment = parseEnvironment(Components[3]);
@@ -53,7 +53,7 @@ index a9afcc9db96a..c4307bf457c7 100644
            ObjectFormat = parseFormat(Components[3]);
          }
        }
-@@ -853,6 +858,10 @@ Triple::Triple(const Twine &ArchStr, const Twine &VendorStr, const Twine &OSStr,
+@@ -1079,6 +1084,10 @@ Triple::Triple(const Twine &ArchStr, const Twine &VendorStr, const Twine &OSStr,
        ObjectFormat(parseFormat(EnvironmentStr.str())) {
    if (ObjectFormat == Triple::UnknownObjectFormat)
      ObjectFormat = getDefaultFormat(*this);
@@ -63,22 +63,22 @@ index a9afcc9db96a..c4307bf457c7 100644
 +    Environment = Triple::GNUEABIHF;
  }
  
- std::string Triple::normalize(StringRef Str) {
-@@ -1103,6 +1112,9 @@ static VersionTuple parseVersionFromName(StringRef Name) {
- VersionTuple Triple::getEnvironmentVersion() const {
-   StringRef EnvironmentName = getEnvironmentName();
+ static VersionTuple parseVersionFromName(StringRef Name);
+@@ -1396,6 +1405,9 @@ StringRef Triple::getEnvironmentVersionString() const {
+     return "";
+ 
    StringRef EnvironmentTypeName = getEnvironmentTypeName(getEnvironment());
 +  // MeeGo uses "gnueabi" to mean "gnueabihf"
 +  if (Vendor == Triple::MeeGo && getEnvironment() == Triple::GNUEABIHF)
 +    EnvironmentTypeName = "gnueabi";
-   if (EnvironmentName.startswith(EnvironmentTypeName))
-     EnvironmentName = EnvironmentName.substr(EnvironmentTypeName.size());
+   EnvironmentName.consume_front(EnvironmentTypeName);
  
-diff --git a/llvm/unittests/ADT/TripleTest.cpp b/llvm/unittests/ADT/TripleTest.cpp
-index 3006ab6d40e8..7a28ed624232 100644
---- a/llvm/unittests/ADT/TripleTest.cpp
-+++ b/llvm/unittests/ADT/TripleTest.cpp
-@@ -384,6 +384,12 @@ TEST(TripleTest, ParsedIDs) {
+   if (EnvironmentName.contains("-")) {
+diff --git a/llvm/unittests/TargetParser/TripleTest.cpp b/llvm/unittests/TargetParser/TripleTest.cpp
+index 61b3637bb48e..a1e78462bcd7 100644
+--- a/llvm/unittests/TargetParser/TripleTest.cpp
++++ b/llvm/unittests/TargetParser/TripleTest.cpp
+@@ -781,6 +781,12 @@ TEST(TripleTest, ParsedIDs) {
    EXPECT_EQ(Triple::Linux, T.getOS());
    EXPECT_EQ(Triple::GNUEABI, T.getEnvironment());
  
