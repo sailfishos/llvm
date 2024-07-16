@@ -1,21 +1,21 @@
-%global maj_ver 15
-%global min_ver 0
-%global patch_ver 7
+%global maj_ver 18
+%global min_ver 1
+%global patch_ver 8
 
 %global clang_tools_binaries \
+	%{_bindir}/amdgpu-arch \
 	%{_bindir}/clang-apply-replacements \
 	%{_bindir}/clang-change-namespace \
 	%{_bindir}/clang-check \
 	%{_bindir}/clang-doc \
 	%{_bindir}/clang-extdef-mapping \
 	%{_bindir}/clang-format \
+	%{_bindir}/clang-include-cleaner \
 	%{_bindir}/clang-include-fixer \
 	%{_bindir}/clang-linker-wrapper \
 	%{_bindir}/clang-move \
-	%{_bindir}/clang-nvlink-wrapper \
 	%{_bindir}/clang-offload-bundler \
 	%{_bindir}/clang-offload-packager \
-	%{_bindir}/clang-offload-wrapper \
 	%{_bindir}/clang-pseudo \
 	%{_bindir}/clang-query \
 	%{_bindir}/clang-refactor \
@@ -27,6 +27,7 @@
 	%{_bindir}/clangd \
 	%{_bindir}/diagtool \
 	%{_bindir}/hmaptool \
+	%{_bindir}/nvptx-arch \
 	%{_bindir}/pp-trace \
 	%{_bindir}/run-clang-tidy
 
@@ -50,7 +51,6 @@ Patch1: 0001-LLVM-Add-MeeGo-vendor-type.patch
 Patch2: 0002-Add-Triple-isMeeGo.patch
 Patch3: 0003-Clang-SailfishOS-toolchain.patch
 Patch4: 0004-Make-funwind-tables-the-default-for-all-archs.patch
-Patch5: 0005-Disable-out-of-line-atomics-on-MeeGo.patch
 
 BuildRequires:	gcc
 BuildRequires:	gcc-c++
@@ -173,7 +173,8 @@ pushd build
 	-DSPHINX_WARNINGS_AS_ERRORS=OFF \
 	-DBUILD_SHARED_LIBS=OFF \
 	-DCLANG_BUILD_EXAMPLES:BOOL=OFF \
-	-DCLANG_DEFAULT_UNWINDLIB=libgcc
+	-DCLANG_DEFAULT_UNWINDLIB=libgcc \
+	-DLLVM_INCLUDE_TESTS=OFF
 
 %ninja_build
 popd
@@ -188,7 +189,7 @@ pushd clang
 mkdir -p %{buildroot}%{python3_sitelib}/clang/
 
 # install scanbuild-py to python sitelib.
-mv %{buildroot}%{_prefix}/lib/{libear,libscanbuild} %{buildroot}%{python3_sitelib}
+mv %{buildroot}/%{_libdir}/{libear,libscanbuild} %{buildroot}%{python3_sitelib}
 
 # remove editor integrations (bbedit, sublime, emacs, vim)
 rm -vf %{buildroot}%{_datadir}/clang/clang-format-bbedit.applescript

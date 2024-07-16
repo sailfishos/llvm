@@ -1,21 +1,8 @@
-From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: Ruben De Smet <ruben.de.smet@rubdos.be>
-Date: Sun, 26 Jun 2022 10:57:51 +0200
-Subject: [PATCH] Clang: SailfishOS toolchain
-
-Signed-off-by: Ruben De Smet <ruben.de.smet@rubdos.be>
----
- clang/include/clang/Driver/Distro.h   | 5 +++++
- clang/lib/Driver/Distro.cpp           | 3 +++
- clang/lib/Driver/ToolChains/Gnu.cpp   | 4 +++-
- clang/lib/Driver/ToolChains/Linux.cpp | 8 ++++----
- 4 files changed, 15 insertions(+), 5 deletions(-)
-
 diff --git a/clang/include/clang/Driver/Distro.h b/clang/include/clang/Driver/Distro.h
-index 2723f75e8945..58616ad541e1 100644
+index a8de94163e8b..240587994938 100644
 --- a/clang/include/clang/Driver/Distro.h
 +++ b/clang/include/clang/Driver/Distro.h
-@@ -45,6 +45,7 @@ public:
+@@ -46,6 +46,7 @@ public:
      Fedora,
      Gentoo,
      OpenSUSE,
@@ -23,8 +10,8 @@ index 2723f75e8945..58616ad541e1 100644
      UbuntuHardy,
      UbuntuIntrepid,
      UbuntuJaunty,
-@@ -124,6 +125,10 @@ public:
-     return DistroVal >= DebianLenny && DistroVal <= DebianBookworm;
+@@ -129,6 +130,10 @@ public:
+     return DistroVal >= DebianLenny && DistroVal <= DebianTrixie;
    }
  
 +  bool IsSailfish() const {
@@ -32,13 +19,13 @@ index 2723f75e8945..58616ad541e1 100644
 +  }
 +
    bool IsUbuntu() const {
-     return DistroVal >= UbuntuHardy && DistroVal <= UbuntuJammy;
+     return DistroVal >= UbuntuHardy && DistroVal <= UbuntuNoble;
    }
 diff --git a/clang/lib/Driver/Distro.cpp b/clang/lib/Driver/Distro.cpp
-index 5ac38c34d112..cccb2026e527 100644
+index a7e7f169dc14..cd8684020dfe 100644
 --- a/clang/lib/Driver/Distro.cpp
 +++ b/clang/lib/Driver/Distro.cpp
-@@ -197,6 +197,9 @@ static Distro::DistroType DetectDistro(llvm::vfs::FileSystem &VFS) {
+@@ -204,6 +204,9 @@ static Distro::DistroType DetectDistro(llvm::vfs::FileSystem &VFS) {
    if (VFS.exists("/etc/gentoo-release"))
      return Distro::Gentoo;
  
@@ -49,10 +36,10 @@ index 5ac38c34d112..cccb2026e527 100644
  }
  
 diff --git a/clang/lib/Driver/ToolChains/Gnu.cpp b/clang/lib/Driver/ToolChains/Gnu.cpp
-index 7a9570a686f4..e7f57c824961 100644
+index e5e1b1d77269..3d0d38972977 100644
 --- a/clang/lib/Driver/ToolChains/Gnu.cpp
 +++ b/clang/lib/Driver/ToolChains/Gnu.cpp
-@@ -2073,7 +2073,7 @@ void Generic_GCC::GCCInstallationDetector::AddDefaultGCCPrefixes(
+@@ -2452,7 +2452,7 @@ void Generic_GCC::GCCInstallationDetector::AddDefaultGCCPrefixes(
    static const char *const AArch64LibDirs[] = {"/lib64", "/lib"};
    static const char *const AArch64Triples[] = {
        "aarch64-none-linux-gnu", "aarch64-linux-gnu", "aarch64-redhat-linux",
@@ -61,7 +48,7 @@ index 7a9570a686f4..e7f57c824961 100644
    static const char *const AArch64beLibDirs[] = {"/lib"};
    static const char *const AArch64beTriples[] = {"aarch64_be-none-linux-gnu",
                                                   "aarch64_be-linux-gnu"};
-@@ -2082,6 +2082,7 @@ void Generic_GCC::GCCInstallationDetector::AddDefaultGCCPrefixes(
+@@ -2461,6 +2461,7 @@ void Generic_GCC::GCCInstallationDetector::AddDefaultGCCPrefixes(
    static const char *const ARMTriples[] = {"arm-linux-gnueabi"};
    static const char *const ARMHFTriples[] = {"arm-linux-gnueabihf",
                                               "armv7hl-redhat-linux-gnueabi",
@@ -69,19 +56,11 @@ index 7a9570a686f4..e7f57c824961 100644
                                               "armv6hl-suse-linux-gnueabi",
                                               "armv7hl-suse-linux-gnueabi"};
    static const char *const ARMebLibDirs[] = {"/lib"};
-@@ -2108,6 +2109,7 @@ void Generic_GCC::GCCInstallationDetector::AddDefaultGCCPrefixes(
-       "i586-linux-gnu",      "i686-linux-gnu",        "i686-pc-linux-gnu",
-       "i386-redhat-linux6E", "i686-redhat-linux",     "i386-redhat-linux",
-       "i586-suse-linux",     "i686-montavista-linux", "i686-gnu",
-+      "i486-meego-linux"
-   };
- 
-   static const char *const M68kLibDirs[] = {"/lib"};
 diff --git a/clang/lib/Driver/ToolChains/Linux.cpp b/clang/lib/Driver/ToolChains/Linux.cpp
-index 83cb41159de7..e7c2dcaef02a 100644
+index 4300a2bdff17..8ac052972ebb 100644
 --- a/clang/lib/Driver/ToolChains/Linux.cpp
 +++ b/clang/lib/Driver/ToolChains/Linux.cpp
-@@ -194,7 +194,7 @@ Linux::Linux(const Driver &D, const llvm::Triple &Triple, const ArgList &Args)
+@@ -232,7 +232,7 @@ Linux::Linux(const Driver &D, const llvm::Triple &Triple, const ArgList &Args)
    }
  
    if (Distro.IsOpenSUSE() || Distro.IsUbuntu() || Distro.IsAlpineLinux() ||
@@ -90,28 +69,22 @@ index 83cb41159de7..e7c2dcaef02a 100644
      ExtraOpts.push_back("-z");
      ExtraOpts.push_back("relro");
    }
-@@ -233,13 +233,13 @@ Linux::Linux(const Driver &D, const llvm::Triple &Triple, const ArgList &Args)
+@@ -275,7 +275,7 @@ Linux::Linux(const Driver &D, const llvm::Triple &Triple, const ArgList &Args)
    // Hexagon linker/loader does not support .gnu.hash
    if (!IsMips && !IsHexagon) {
-     if (Distro.IsRedhat() || Distro.IsOpenSUSE() || Distro.IsAlpineLinux() ||
--        (Distro.IsUbuntu() && Distro >= Distro::UbuntuMaverick) ||
-+        (Distro.IsUbuntu() && Distro >= Distro::UbuntuMaverick) || Distro.IsSailfish() ||
-         (IsAndroid && !Triple.isAndroidVersionLT(23)))
-       ExtraOpts.push_back("--hash-style=gnu");
- 
-     if (Distro.IsDebian() || Distro.IsOpenSUSE() ||
-         Distro == Distro::UbuntuLucid || Distro == Distro::UbuntuJaunty ||
--        Distro == Distro::UbuntuKarmic ||
-+        Distro == Distro::UbuntuKarmic || Distro.IsSailfish() ||
+     if (Distro.IsOpenSUSE() || Distro == Distro::UbuntuLucid ||
+-        Distro == Distro::UbuntuJaunty || Distro == Distro::UbuntuKarmic ||
++        Distro == Distro::UbuntuJaunty || Distro == Distro::UbuntuKarmic || Distro.IsSailfish() ||
          (IsAndroid && Triple.isAndroidVersionLT(23)))
        ExtraOpts.push_back("--hash-style=both");
-   }
-@@ -248,7 +248,7 @@ Linux::Linux(const Driver &D, const llvm::Triple &Triple, const ArgList &Args)
+     else
+@@ -286,6 +286,9 @@ Linux::Linux(const Driver &D, const llvm::Triple &Triple, const ArgList &Args)
    ExtraOpts.push_back("--build-id");
  #endif
  
--  if (IsAndroid || Distro.IsOpenSUSE())
-+  if (IsAndroid || Distro.IsOpenSUSE() || Distro.IsSailfish())
-     ExtraOpts.push_back("--enable-new-dtags");
- 
++  if (Distro.IsSailfish())
++    ExtraOpts.push_back("--enable-new-dtags");
++
    // The selection of paths to try here is designed to match the patterns which
+   // the GCC driver itself uses, as this is part of the GCC-compatible driver.
+   // This was determined by running GCC in a fake filesystem, creating all
