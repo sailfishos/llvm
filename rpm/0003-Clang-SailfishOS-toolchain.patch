@@ -1,3 +1,16 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Ruben De Smet <ruben.de.smet@rubdos.be>
+Date: Sun, 26 Jun 2022 10:57:51 +0200
+Subject: [PATCH] Clang: SailfishOS toolchain
+
+Signed-off-by: Ruben De Smet <ruben.de.smet@rubdos.be>
+---
+ clang/include/clang/Driver/Distro.h   | 5 +++++
+ clang/lib/Driver/Distro.cpp           | 3 +++
+ clang/lib/Driver/ToolChains/Gnu.cpp   | 4 +++-
+ clang/lib/Driver/ToolChains/Linux.cpp | 8 ++++----
+ 4 files changed, 15 insertions(+), 5 deletions(-)
+
 diff --git a/clang/include/clang/Driver/Distro.h b/clang/include/clang/Driver/Distro.h
 index a8de94163e8b..240587994938 100644
 --- a/clang/include/clang/Driver/Distro.h
@@ -56,6 +69,14 @@ index e5e1b1d77269..3d0d38972977 100644
                                               "armv6hl-suse-linux-gnueabi",
                                               "armv7hl-suse-linux-gnueabi"};
    static const char *const ARMebLibDirs[] = {"/lib"};
+@@ -2491,6 +2492,7 @@ void Generic_GCC::GCCInstallationDetector::AddDefaultGCCPrefixes(
+       "i586-linux-gnu",      "i686-linux-gnu",        "i686-pc-linux-gnu",
+       "i386-redhat-linux6E", "i686-redhat-linux",     "i386-redhat-linux",
+       "i586-suse-linux",     "i686-montavista-linux",
++      "i486-meego-linux"
+   };
+
+   static const char *const LoongArch64LibDirs[] = {"/lib64", "/lib"};
 diff --git a/clang/lib/Driver/ToolChains/Linux.cpp b/clang/lib/Driver/ToolChains/Linux.cpp
 index 4300a2bdff17..8ac052972ebb 100644
 --- a/clang/lib/Driver/ToolChains/Linux.cpp

@@ -1,3 +1,14 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Ruben De Smet <ruben.de.smet@rubdos.be>
+Date: Sun, 26 Jun 2022 10:48:13 +0200
+Subject: [PATCH] LLVM: Add MeeGo vendor type
+
+---
+ llvm/include/llvm/ADT/Triple.h    |  3 ++-
+ llvm/lib/Support/Triple.cpp       | 12 ++++++++++++
+ llvm/unittests/ADT/TripleTest.cpp |  6 ++++++
+ 3 files changed, 20 insertions(+), 1 deletion(-)
+
 diff --git a/llvm/include/llvm/TargetParser/Triple.h b/llvm/include/llvm/TargetParser/Triple.h
 index 49ec8de9c528..dc195e8dfcfd 100644
 --- a/llvm/include/llvm/TargetParser/Triple.h

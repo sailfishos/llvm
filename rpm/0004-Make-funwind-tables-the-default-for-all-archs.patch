@@ -1,3 +1,13 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: serge-sans-paille <sguelton@redhat.com>
+Date: Tue, 10 Dec 2019 09:18:03 +0000
+Subject: [PATCH] Make -funwind-tables the default for all archs
+
+---
+ clang/lib/Driver/ToolChain.cpp      | 2 +-
+ clang/lib/Driver/ToolChains/Gnu.cpp | 3 +++
+ 2 files changed, 4 insertions(+), 1 deletion(-)
+
 diff --git a/clang/lib/Driver/ToolChain.cpp b/clang/lib/Driver/ToolChain.cpp
 index 388030592b48..264a849da435 100644
 --- a/clang/lib/Driver/ToolChain.cpp
