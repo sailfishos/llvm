@@ -190,7 +190,7 @@ pushd clang
 mkdir -p %{buildroot}%{python3_sitelib}/clang/
 
 # install scanbuild-py to python sitelib.
-mv %{buildroot}/%{_libdir}/{libear,libscanbuild} %{buildroot}%{python3_sitelib}
+mv %{buildroot}%{_prefix}/lib/{libear,libscanbuild} %{buildroot}%{python3_sitelib}
 
 # remove editor integrations (bbedit, sublime, emacs, vim)
 rm -vf %{buildroot}%{_datadir}/clang/clang-format-bbedit.applescript
