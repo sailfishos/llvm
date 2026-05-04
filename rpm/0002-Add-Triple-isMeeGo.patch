@@ -7,11 +7,11 @@ Subject: [PATCH] Add Triple::isMeeGo()
  llvm/include/llvm/ADT/Triple.h | 3 +++
  1 file changed, 3 insertions(+)
 
-diff --git a/llvm/include/llvm/ADT/Triple.h b/llvm/include/llvm/ADT/Triple.h
-index 9e36dfd4d2d5..8e66888615ff 100644
---- a/llvm/include/llvm/ADT/Triple.h
-+++ b/llvm/include/llvm/ADT/Triple.h
-@@ -657,6 +657,9 @@ public:
+diff --git a/llvm/include/llvm/TargetParser/Triple.h b/llvm/include/llvm/TargetParser/Triple.h
+index dc195e8dfcfd..59f58657cae0 100644
+--- a/llvm/include/llvm/TargetParser/Triple.h
++++ b/llvm/include/llvm/TargetParser/Triple.h
+@@ -730,6 +730,9 @@ public:
    /// Tests whether the target is Android
    bool isAndroid() const { return getEnvironment() == Triple::Android; }
  

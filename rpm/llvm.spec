@@ -10,7 +10,7 @@
 %endif
 
 Name: llvm
-Version: 15.0.7
+Version: 17.0.6
 Release: 0
 Summary: The Low Level Virtual Machine (An Optimizing Compiler Infrastructure)
 License: University of Illinois/NCSA Open Source License
@@ -21,7 +21,6 @@ Patch1: 0001-LLVM-Add-MeeGo-vendor-type.patch
 Patch2: 0002-Add-Triple-isMeeGo.patch
 Patch3: 0003-Clang-SailfishOS-toolchain.patch
 Patch4: 0004-Make-funwind-tables-the-default-for-all-archs.patch
-Patch5: 0005-Disable-out-of-line-atomics-on-MeeGo.patch
 
 Requires(post): /sbin/ldconfig
 Requires(postun): /sbin/ldconfig
@@ -55,6 +54,9 @@ LLVM Header files
 
 %prep
 %autosetup -p1 -n %{name}-%{version}/%{name}
+
+# symlink clang extra tools to enable build
+ln -s ../../clang-tools-extra clang/tools/extra || :
 
 %build
 pushd llvm
