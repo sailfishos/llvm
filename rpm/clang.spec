@@ -1,32 +1,34 @@
-%global maj_ver 15
-%global min_ver 0
-%global patch_ver 7
+%global maj_ver 20
+%global min_ver 1
+%global patch_ver 8
 
 %global clang_tools_binaries \
+	%{_bindir}/amdgpu-arch \
 	%{_bindir}/clang-apply-replacements \
 	%{_bindir}/clang-change-namespace \
 	%{_bindir}/clang-check \
 	%{_bindir}/clang-doc \
 	%{_bindir}/clang-extdef-mapping \
 	%{_bindir}/clang-format \
+	%{_bindir}/clang-include-cleaner \
 	%{_bindir}/clang-include-fixer \
+	%{_bindir}/clang-installapi \
 	%{_bindir}/clang-linker-wrapper \
 	%{_bindir}/clang-move \
 	%{_bindir}/clang-nvlink-wrapper \
 	%{_bindir}/clang-offload-bundler \
 	%{_bindir}/clang-offload-packager \
-	%{_bindir}/clang-offload-wrapper \
-	%{_bindir}/clang-pseudo \
 	%{_bindir}/clang-query \
 	%{_bindir}/clang-refactor \
 	%{_bindir}/clang-reorder-fields \
-	%{_bindir}/clang-rename \
 	%{_bindir}/clang-repl \
 	%{_bindir}/clang-scan-deps \
+	%{_bindir}/clang-sycl-linker \
 	%{_bindir}/clang-tidy \
 	%{_bindir}/clangd \
 	%{_bindir}/diagtool \
 	%{_bindir}/hmaptool \
+	%{_bindir}/nvptx-arch \
 	%{_bindir}/pp-trace \
 	%{_bindir}/run-clang-tidy
 
@@ -42,7 +44,7 @@ Name:		clang
 Version:	%{maj_ver}.%{min_ver}.%{patch_ver}
 Release:	0
 Summary:	A C language family front-end for LLVM
-License:	NCSA
+License:	Apache-2.0 WITH LLVM-exception OR NCSA
 URL:		http://llvm.org
 Source:		%{version}/%{name}-%{version}.tar.gz
 
@@ -50,7 +52,6 @@ Patch1: 0001-LLVM-Add-MeeGo-vendor-type.patch
 Patch2: 0002-Add-Triple-isMeeGo.patch
 Patch3: 0003-Clang-SailfishOS-toolchain.patch
 Patch4: 0004-Make-funwind-tables-the-default-for-all-archs.patch
-Patch5: 0005-Disable-out-of-line-atomics-on-MeeGo.patch
 
 BuildRequires:	gcc
 BuildRequires:	gcc-c++
@@ -96,7 +97,7 @@ Development header files for clang.
 
 %package analyzer
 Summary:	A source code analysis framework
-License:	NCSA and MIT
+License:	Apache-2.0 WITH LLVM-exception OR NCSA OR MIT
 BuildArch:	noarch
 Requires:	%{name} = %{version}-%{release}
 
@@ -124,15 +125,13 @@ Development header files for clang tools.
 %prep
 %autosetup -p1 -n %{name}-%{version}/llvm
 
+%build
+
 # symlink clang extra tools to enable build
 ln -s ../../clang-tools-extra clang/tools/extra || :
 
-%build
-
-pushd clang
-
-mkdir -p build
-pushd build
+mkdir -p clang/build
+pushd clang/build
 
 # Decrease debuginfo verbosity to reduce memory consumption during final library linking
 %global optflags %(echo %{optflags} | sed 's/-g /-g1 /')
@@ -146,11 +145,12 @@ pushd build
 	-DLLVM_LINK_LLVM_DYLIB:BOOL=ON \
 	-DCMAKE_BUILD_TYPE=Release \
 	-DPYTHON_EXECUTABLE=%{__python3} \
-	-DCMAKE_INSTALL_RPATH:BOOL=";" \
+	-DCMAKE_INSTALL_RPATH=";" \
 %ifarch s390 s390x %{arm} aarch64 %ix86 ppc64le
 	-DCMAKE_C_FLAGS="%{optflags} -DNDEBUG" \
 	-DCMAKE_CXX_FLAGS="%{optflags} -DNDEBUG" \
 %endif
+	-DLLVM_INCLUDE_TESTS:BOOL=OFF \
 	-DCLANG_INCLUDE_TESTS:BOOL=OFF \
 	-DLLVM_MAIN_SRC_DIR=%{_datadir}/llvm/src \
 %if 0%{?__isa_bits} == 64
@@ -178,8 +178,6 @@ pushd build
 %ninja_build
 popd
 
-popd
-
 %install
 pushd clang
 
@@ -197,8 +195,8 @@ rm -vf %{buildroot}%{_datadir}/clang/*.el
 
 # TODO: Package html docs
 rm -Rvf %{buildroot}%{_docdir}/%{name}-%{version}}
-rm -Rvf %{buildroot}%{_prefix}/share/clang/clang-doc-default-stylesheet.css
-rm -Rvf %{buildroot}%{_prefix}/share/clang/index.js
+rm -Rvf %{buildroot}%{_prefix}/share/clang-doc/clang-doc-default-stylesheet.css
+rm -Rvf %{buildroot}%{_prefix}/share/clang-doc/index.js
 rm -Rvf %{buildroot}%{_mandir}/man1
 
 # TODO: What are the Fedora guidelines for packaging bash autocomplete files?
@@ -262,7 +260,6 @@ popd
 %{_datadir}/clang/clang-include-fixer.py*
 %{_datadir}/clang/clang-tidy-diff.py*
 %{_datadir}/clang/run-find-all-symbols.py*
-%{_datadir}/clang/clang-rename.py*
 
 %files tools-extra-devel
 %{_includedir}/clang-tidy/
